@@ -4,14 +4,10 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    environment:
-      POSTGRES_USER: prod_user
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: prod_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U prod_user -d prod_db"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,9 +19,8 @@ services:
       - .env
     environment:
       POSTGRES_HOST: postgres
-      POSTGRES_USER: prod_user
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: prod_db
+    expose:
+      - "8000"
     depends_on:
       postgres:
         condition: service_healthy
