@@ -15,7 +15,7 @@ services:
       - proxy
 
   yak-server:
-    image: ghcr.io/yak-toto/yak-server:0.64.0-world_cup_2026
+    image: ghcr.io/yak-toto/yak-server:0.66.1-world_cup_2026
     restart: unless-stopped
     env_file:
       - .env
@@ -41,7 +41,7 @@ services:
       - proxy
 
   yak-display:
-    image: ghcr.io/yak-toto/yak-display:0.6.1
+    image: ghcr.io/yak-toto/yak-display:0.8.0
     restart: unless-stopped
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
