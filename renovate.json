@@ -3,5 +3,12 @@
     "extends": [
         "config:recommended",
         "helpers:pinGitHubActionDigests"
+    ],
+    "minimumReleaseAge": "5 days",
+    "packageRules": [
+        {
+            "matchPackageNames": ["yak-server", "yak-display"],
+            "minimumReleaseAge": null
+        }
     ]
 }
