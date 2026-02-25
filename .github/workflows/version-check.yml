@@ -1,0 +1,55 @@
+name: ✅ Version Compatibility Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  version-compatibility:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create external proxy network
+        run: docker network create proxy
+
+      - name: Create .env for CI
+        run: |
+          cat > .env << EOF
+          ADMIN_PASSWORD=Ci1placeholder
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=postgres
+          POSTGRES_DB=yaktest
+          POSTGRES_PORT=5432
+          POSTGRES_DATASET=/tmp/pgdata
+          EOF
+
+      - name: Start full stack
+        run: docker compose up -d --wait
+
+      - name: Get generatedFromBackend from yak-display /frontend-meta
+        id: frontend_meta
+        run: |
+          response=$(docker compose exec yak-display wget -qO- http://yak-display/frontend-meta)
+          echo "backend_required=$(echo "$response" | jq -r '.generatedFromBackend')" >> "$GITHUB_OUTPUT"
+
+      - name: Get version from yak-server /api/version
+        id: backend_version
+        run: |
+          response=$(docker compose exec yak-display wget -qO- http://yak-display/api/version)
+          echo "version=$(echo "$response" | jq -r '.result.version')" >> "$GITHUB_OUTPUT"
+
+      - name: Assert compatibility
+        run: |
+          required="${{ steps.frontend_meta.outputs.backend_required }}"
+          actual="${{ steps.backend_version.outputs.version }}"
+          echo "yak-display was built against backend: $required"
+          echo "yak-server version:                    $actual"
+          if [ "$required" != "$actual" ]; then
+            echo "::error::Incompatible versions — yak-display requires backend v$required but yak-server is v$actual"
+            exit 1
+          fi
+          echo "Versions are compatible."
