@@ -15,7 +15,7 @@ services:
       - proxy
 
   yak-server:
-    image: ghcr.io/yak-toto/yak-server:0.68.0-world_cup_2026
+    image: ghcr.io/yak-toto/yak-server:0.69.0-world_cup_2026
     restart: unless-stopped
     env_file:
       - .env
