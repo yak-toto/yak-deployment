@@ -29,22 +29,44 @@ docker network create proxy
 cp .env.example .env
 ```
 
-| Variable | Description |
-|---|---|
-| `ADMIN_PASSWORD` | Password for the admin account |
-| `POSTGRES_PORT` | Port to expose PostgreSQL on |
-| `POSTGRES_DB` | Database name |
-| `POSTGRES_USER` | Database user |
-| `POSTGRES_PASSWORD` | Database password |
-| `POSTGRES_DATASET` | Host path for PostgreSQL data volume |
-| `COOKIE_SECURE` | Whether to set the `Secure` flag on cookies |
-| `COOKIE_DOMAIN` | Cookie domain |
-| `ALLOWED_ORIGINS` | JSON list of allowed CORS origins (e.g. `["https://example.com"]`) |
+**Authentication**
+
+| Variable | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `ADMIN_PASSWORD` | `string` | yes | — | Password for the admin account |
+| `JWT_SECRET_KEY` | `string` | yes | — | Secret key for signing JWT access tokens |
+| `JWT_REFRESH_SECRET_KEY` | `string` | yes | — | Secret key for signing JWT refresh tokens |
+| `JWT_EXPIRATION_TIME` | `integer` | no | `1800` | JWT access token lifetime in seconds |
+| `JWT_REFRESH_EXPIRATION_TIME` | `integer` | no | `604800` | JWT refresh token lifetime in seconds |
+
+**Database** — shared between the `postgres` and `yak-server` containers
+
+| Variable | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `POSTGRES_PORT` | `integer` | no | `5432` | Port to expose PostgreSQL on |
+| `POSTGRES_DB` | `string` | yes | — | Database name |
+| `POSTGRES_USER` | `string` | yes | — | Database user |
+| `POSTGRES_PASSWORD` | `string` | yes | — | Database password |
+| `POSTGRES_DATASET` | `string` | yes | — | Host path for PostgreSQL data volume |
+
+**Cookie**
+
+| Variable | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `COOKIE_SECURE` | `boolean` | no | `true` | Whether to set the `Secure` flag on cookies |
+| `COOKIE_DOMAIN` | `string` | no | `""` | Cookie domain |
+
+**Application**
+
+| Variable | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `DEBUG` | `integer` | no | `0` | FastAPI/Starlette debug mode (`0` or `1`) |
+| `ALLOWED_ORIGINS` | `JSON array` | no | `[]` | Allowed CORS origins (e.g. `["https://example.com"]`) |
 
 2. Start the stack:
 
 ```sh
-docker compose up -d
+docker compose up -d --wait
 ```
 
 ## Updates
