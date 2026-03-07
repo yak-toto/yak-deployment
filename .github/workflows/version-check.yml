@@ -25,6 +25,8 @@ jobs:
           POSTGRES_DB=yaktest
           POSTGRES_PORT=5432
           POSTGRES_DATASET=/tmp/pgdata
+          JWT_SECRET_KEY=Ci1placeholder
+          JWT_REFRESH_SECRET_KEY=Ci1placeholder
           EOF
 
       - name: Start full stack
