@@ -72,3 +72,7 @@ docker compose up -d --wait
 ## Updates
 
 Dependencies are managed automatically by [Renovate](https://docs.renovatebot.com/). `yak-server` and `yak-display` image updates are grouped into a single PR.
+
+## Ansible
+
+Before 
