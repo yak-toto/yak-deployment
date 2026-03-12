@@ -1,0 +1,91 @@
+#!/usr/sbin/nft -f
+# /etc/nftables.conf
+# Managed by Ansible
+
+table inet firewall
+delete table inet firewall
+
+table inet firewall {
+    # Dynamic sets for SSH brute force tracking (per-source rate limiting)
+    set ssh_brute_v4 {
+        type ipv4_addr
+        flags dynamic, timeout
+        timeout 60s
+    }
+
+    set ssh_brute_v6 {
+        type ipv6_addr
+        flags dynamic, timeout
+        timeout 60s
+    }
+
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        # Allow loopback
+        iif "lo" accept
+
+        # Drop invalid packets early
+        ct state invalid drop
+
+        # Allow established/related connections
+        ct state { established, related } accept
+
+        # ICMPv4 - limited ping
+        ip protocol icmp icmp type echo-request limit rate 10/second burst 20 packets accept
+
+        # ICMPv6 - Neighbor Discovery (essential — no rate limit)
+        icmpv6 type { nd-neighbor-solicit, nd-neighbor-advert, nd-router-solicit, nd-router-advert } accept
+        # ICMPv6 - limited ping6
+        icmpv6 type echo-request limit rate 10/second burst 20 packets accept
+
+        # SSH from trusted IPv4 sources (bypasses rate limiting)
+{% for source in ssh_allowed_sources %}
+        ip saddr {{ source }} tcp dport 22 ct state new accept
+{% endfor %}
+
+        # SSH from trusted IPv6 sources (bypasses rate limiting)
+{% for source in ssh_allowed_sources_v6 %}
+        ip6 saddr {{ source }} tcp dport 22 ct state new accept
+{% endfor %}
+
+        # SSH brute force protection: >3 new connections/60s per source = drop
+        tcp dport 22 ct state new update @ssh_brute_v4 { ip saddr limit rate over 3/minute burst 3 packets } drop
+        tcp dport 22 ct state new update @ssh_brute_v6 { ip6 saddr limit rate over 3/minute burst 3 packets } drop
+        tcp dport 22 ct state new accept
+
+        # Monitoring (node exporter - restricted to monitoring subnet)
+{% if monitoring_subnet is defined and monitoring_subnet %}
+        ip saddr {{ monitoring_subnet }} tcp dport 9100 accept
+{% endif %}
+{% if monitoring_subnet_v6 is defined and monitoring_subnet_v6 %}
+        ip6 saddr {{ monitoring_subnet_v6 }} tcp dport 9100 accept
+{% endif %}
+
+        # SYN flood protection
+        tcp flags & syn == syn limit rate 25/second burst 50 packets accept
+
+        # Logging (rate limited)
+        limit rate 5/minute burst 10 packets log prefix "nftables denied: " level warn
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        # Drop invalid packets early
+        ct state invalid drop
+
+        # Allow established/related connections
+        ct state { established, related } accept
+
+        # Allow Docker inter-container traffic (bridge networks)
+        iifname "docker0" accept
+        oifname "docker0" accept
+        iifname "br-*" accept
+        oifname "br-*" accept
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}

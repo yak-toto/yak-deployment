@@ -1,1 +1,4 @@
 .env
+vault_pass.txt
+
+/.ansible

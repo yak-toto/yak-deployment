@@ -1,0 +1,83 @@
+- name: Deploy yak-toto stack
+  hosts: yak
+  become: true
+
+  roles:
+    - geerlingguy.docker
+
+  tasks:
+    # --- Prerequisites ---
+    - name: Remove apache2 to free port 80
+      ansible.builtin.apt:
+        name: apache2
+        state: absent
+        purge: true
+
+    # Firewall
+    - name: Install nftables
+      ansible.builtin.package:
+        name:
+          - nftables
+        state: present
+
+    - name: Enable and start nftables service
+      ansible.builtin.service:
+        name: nftables
+        enabled: true
+        state: started
+
+    - name: Deploy nftables rules
+      ansible.builtin.template:
+        src: templates/nftables.conf.j2
+        dest: /etc/nftables.conf
+        owner: root
+        group: root
+        mode: "0600"
+        validate: "nft -c -f %s"
+      notify: Reload nftables
+
+    # --- Directories ---
+    - name: Create deployment directory
+      ansible.builtin.file:
+        path: "{{ deploy_dir }}"
+        state: directory
+        mode: "0755"
+
+    # --- Files ---
+    - name: Copy docker-compose.yml
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "{{ deploy_dir }}/docker-compose.yml"
+        mode: "0644"
+
+    - name: Copy nginx.conf
+      ansible.builtin.copy:
+        src: nginx.conf
+        dest: "{{ deploy_dir }}/nginx.conf"
+        mode: "0644"
+
+    - name: Template Caddyfile
+      ansible.builtin.template:
+        src: templates/Caddyfile.j2
+        dest: "{{ deploy_dir }}/Caddyfile"
+        mode: "0644"
+
+    - name: Template .env file
+      ansible.builtin.template:
+        src: templates/env.j2
+        dest: "{{ deploy_dir }}/.env"
+        mode: "0600"
+
+    # --- Deploy ---
+    - name: Deploy stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ deploy_dir }}"
+        state: present
+        wait: true
+        wait_timeout: 120
+
+  handlers:
+    - name: Reload nftables
+      ansible.builtin.command:
+        cmd: nft -f /etc/nftables.conf
+      changed_when: true

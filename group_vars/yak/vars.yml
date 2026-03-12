@@ -1,0 +1,11 @@
+deploy_dir: /opt/yak-deployment
+postgres_dataset: /var/lib/yak-pgdata
+domain: yaktoto.omuforge.com
+
+# SSH access (IPv4)
+ssh_allowed_sources:
+  - 10.0.0.0/8
+  - 192.168.10.0/24
+
+# SSH access (IPv6) — add your trusted IPv6 prefixes here
+ssh_allowed_sources_v6: []

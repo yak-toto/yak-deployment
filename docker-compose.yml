@@ -11,8 +11,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - proxy
 
   yak-server:
     image: ghcr.io/yak-toto/yak-server:0.74.0-world_cup_2026
@@ -37,8 +35,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    networks:
-      - proxy
 
   yak-display:
     image: ghcr.io/yak-toto/yak-display:0.14.2
@@ -53,9 +49,22 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
-    networks:
-      - proxy
 
-networks:
-  proxy:
-    external: true
+  caddy:
+    image: caddy:2.11.2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      yak-display:
+        condition: service_started
+
+volumes:
+  caddy_data:
+  caddy_config:
