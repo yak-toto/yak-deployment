@@ -13,9 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Create external proxy network
-        run: docker network create proxy
-
       - name: Create .env for CI
         run: |
           cat > .env << EOF
@@ -35,13 +32,13 @@ jobs:
       - name: Get generatedFromBackend from yak-display /frontend-meta
         id: frontend_meta
         run: |
-          response=$(docker compose exec yak-display wget -qO- http://yak-display/frontend-meta)
+          response=$(curl -s http://localhost:3000/frontend-meta)
           echo "backend_required=$(echo "$response" | jq -r '.generatedFromBackend')" >> "$GITHUB_OUTPUT"
 
       - name: Get version from yak-server /api/version
         id: backend_version
         run: |
-          response=$(docker compose exec yak-display wget -qO- http://yak-display/api/version)
+          response=$(curl -s http://localhost:3000/api/version)
           echo "version=$(echo "$response" | jq -r '.result.version')" >> "$GITHUB_OUTPUT"
 
       - name: Assert compatibility
