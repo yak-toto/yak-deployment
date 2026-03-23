@@ -15,11 +15,6 @@ nginx proxies `/api/` to `yak-server` and handles SPA routing for everything els
 ## Prerequisites
 
 - Docker with the Compose plugin
-- An external Docker network named `proxy` (e.g. a Traefik/nginx-proxy/caddy network)
-
-```sh
-docker network create proxy
-```
 
 ## Setup
 
