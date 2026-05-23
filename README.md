@@ -7,6 +7,7 @@ Docker Compose deployment for [yak-toto](https://github.com/yak-toto), a sports 
 | Service | Image | Description |
 |---|---|---|
 | `postgres` | `postgres` | Database |
+| `pgadmin` | `dpage/pgadmin4` | PostgreSQL admin UI (port 5050) |
 | `yak-server` | `ghcr.io/yak-toto/yak-server` | REST API (port 8000) |
 | `yak-display` | `ghcr.io/yak-toto/yak-display` | Frontend SPA served via nginx |
 
@@ -43,6 +44,9 @@ cp .env.example .env
 | `POSTGRES_USER` | `string` | yes | — | Database user |
 | `POSTGRES_PASSWORD` | `string` | yes | — | Database password |
 | `POSTGRES_DATASET` | `string` | yes | — | Host path for PostgreSQL data volume |
+| `PGADMIN_DATASET` | `string` | yes | — | Host path for pgAdmin data volume |
+| `PGADMIN_DEFAULT_EMAIL` | `string` | yes | — | pgAdmin login email |
+| `PGADMIN_DEFAULT_PASSWORD` | `string` | yes | — | pgAdmin login password |
 
 **Cookie**
 

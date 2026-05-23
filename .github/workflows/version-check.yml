@@ -24,6 +24,9 @@ jobs:
           POSTGRES_DATASET=/tmp/pgdata
           JWT_SECRET_KEY=Ci1placeholder
           JWT_REFRESH_SECRET_KEY=Ci1placeholder
+          PGADMIN_DATASET=/tmp/pgadmindata
+          PGADMIN_DEFAULT_EMAIL=yaktoto648@gmail.com
+          PGADMIN_DEFAULT_PASSWORD=pgadmin
           EOF
 
       - name: Start full stack
