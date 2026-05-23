@@ -13,6 +13,25 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    image: dpage/pgadmin4:9.15.0
+    container_name: yak-pgadmin
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ${PGADMIN_DATASET}:/var/lib/pgadmin
+    ports:
+      - 5050:80
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   yak-server:
     image: ghcr.io/yak-toto/yak-server:0.83.0-world_cup_2026
     container_name: yak-server
