@@ -7,7 +7,6 @@ Docker Compose deployment for [yak-toto](https://github.com/yak-toto), a sports 
 | Service | Image | Description |
 |---|---|---|
 | `postgres` | `postgres` | Database |
-| `adminer` | `adminer` | PostgreSQL admin UI (port 5050) |
 | `yak-server` | `ghcr.io/yak-toto/yak-server` | REST API (port 8000) |
 | `yak-display` | `ghcr.io/yak-toto/yak-display` | Frontend SPA served via nginx |
 
