@@ -29,26 +29,26 @@ jobs:
       - name: Start full stack
         run: docker compose up -d --wait
 
-      - name: Get generatedFromBackend from yak-display /frontend-meta
+      - name: Get generatedFromApiSchemaHash from yak-display /frontend-meta
         id: frontend_meta
         run: |
           response=$(curl -s http://localhost:3000/frontend-meta)
-          echo "backend_required=$(echo "$response" | jq -r '.generatedFromBackend')" >> "$GITHUB_OUTPUT"
+          echo "frontend_schema_hash=$(echo "$response" | jq -r '.generatedFromApiSchemaHash')" >> "$GITHUB_OUTPUT"
 
-      - name: Get version from yak-server /api/version
+      - name: Get schema hash from yak-server /api/version
         id: backend_version
         run: |
           response=$(curl -s http://localhost:3000/api/version)
-          echo "version=$(echo "$response" | jq -r '.result.version')" >> "$GITHUB_OUTPUT"
+          echo "backend_schema_hash=$(echo "$response" | jq -r '.result.schema_hash')" >> "$GITHUB_OUTPUT"
 
       - name: Assert compatibility
         run: |
-          required="${{ steps.frontend_meta.outputs.backend_required }}"
-          actual="${{ steps.backend_version.outputs.version }}"
+          required="${{ steps.frontend_meta.outputs.frontend_schema_hash }}"
+          actual="${{ steps.backend_version.outputs.backend_schema_hash }}"
           echo "yak-display was built against backend: $required"
           echo "yak-server version:                    $actual"
           if [ "$required" != "$actual" ]; then
-            echo "::error::Incompatible versions — yak-display requires backend v$required but yak-server is v$actual"
+            echo "::error::Incompatible versions — yak-display requires backend $required but yak-server is $actual"
             exit 1
           fi
           echo "Versions are compatible."
