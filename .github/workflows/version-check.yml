@@ -24,6 +24,7 @@ jobs:
           POSTGRES_DATASET=/tmp/pgdata
           JWT_SECRET_KEY=Ci1placeholder
           JWT_REFRESH_SECRET_KEY=Ci1placeholder
+          SIGNUP_TOKEN=AAAAAA
           EOF
 
       - name: Start full stack
