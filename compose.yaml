@@ -21,6 +21,7 @@ services:
       - .env
     environment:
       POSTGRES_HOST: postgres
+      FORWARDED_ALLOW_IPS: "*"
     expose:
       - "8000"
     depends_on:
