@@ -14,7 +14,7 @@ services:
       retries: 5
 
   yak-server:
-    image: ghcr.io/yak-toto/yak-server:0.94.27-world_cup_2026@sha256:4a524bf341fe2b25fb2f03480eab6ebd296c0fc01dcdb9d88e2af7411910fdf9
+    image: ghcr.io/yak-toto/yak-server:0.95.0-world_cup_2026@sha256:c2c1c336128afee7330929d368d58466c0a8c336ba845cbc3e5a860b33e23a4f
     container_name: yak-server
     restart: unless-stopped
     env_file:
