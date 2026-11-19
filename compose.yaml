@@ -40,7 +40,7 @@ services:
         max-file: "3"
 
   yak-display:
-    image: ghcr.io/yak-toto/yak-display:0.23.8@sha256:da4ac9f02037242ec488e6d6c7195135d183de03fab2999e7110f24add03e72e
+    image: ghcr.io/yak-toto/yak-display:0.24.0@sha256:3fc85a6b4ef05af88c0a3c7f8b75011516f91bdf052ff67011e715e4fc58b240
     container_name: yak-display
     restart: unless-stopped
     volumes:
