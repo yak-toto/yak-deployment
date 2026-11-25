@@ -15,7 +15,7 @@
         {
             "description": "Postgres major upgrades must be approved and merged manually",
             "matchDatasources": ["docker"],
-            "matchPackageNames": ["postgres"],
+            "matchPackageNames": ["docker.io/postgres"],
             "matchUpdateTypes": ["major"],
             "dependencyDashboardApproval": true,
             "automerge": false
