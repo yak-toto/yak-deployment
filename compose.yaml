@@ -30,6 +30,8 @@ services:
       # --- authentication settings ---
       JWT_SECRET_KEY: "${JWT_SECRET_KEY:?error}"
       JWT_REFRESH_SECRET_KEY: "${JWT_REFRESH_SECRET_KEY:?error}"
+      JWT_EXPIRATION_TIME: "${JWT_EXPIRATION_TIME:?error}"
+      JWT_REFRESH_EXPIRATION_TIME: "${JWT_REFRESH_EXPIRATION_TIME:?error}"
       SIGNUP_TOKEN: "${SIGNUP_TOKEN:?error}"
       # --- database settings ---
       POSTGRES_DB: "${POSTGRES_DB:?error}"
