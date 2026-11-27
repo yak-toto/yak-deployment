@@ -25,6 +25,9 @@ jobs:
           JWT_SECRET_KEY=Ci1placeholder
           JWT_REFRESH_SECRET_KEY=Ci1placeholder
           SIGNUP_TOKEN=AAAAAA
+          ALLOWED_ORIGINS=[]
+          COOKIE_DOMAIN=localhost
+          COOKIE_SECURE=False
           EOF
 
       - name: Start full stack

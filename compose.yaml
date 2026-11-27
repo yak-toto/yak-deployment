@@ -3,10 +3,13 @@ services:
     image: docker.io/postgres:18.7-alpine3.24@sha256:0115267ab5a509022df9319c77be365cef335adb71556c75f60f5360ee247e71
     container_name: yak-db
     restart: unless-stopped
-    env_file:
-      - .env
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:?error}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?error}"
+      POSTGRES_PORT: "${POSTGRES_PORT:?error}"
+      POSTGRES_USER: "${POSTGRES_USER:?error}"
     volumes:
-      - ${POSTGRES_DATASET}:/var/lib/postgresql
+      - ${POSTGRES_DATASET:?error}:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
@@ -17,10 +20,24 @@ services:
     image: ghcr.io/yak-toto/yak-server:0.97.0-world_cup_2026@sha256:69c3c218ba836bb97255676d3bc5ee168159559eadd3a2645ae9f2837514247d
     container_name: yak-server
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
+      # --- application settings ---
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?error}"
+      # --- cookies settings ---
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:?error}"
+      COOKIE_DOMAIN: "${COOKIE_DOMAIN:?error}"
+      COOKIE_SECURE: "${COOKIE_SECURE:?error}"
+      # --- authentication settings ---
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY:?error}"
+      JWT_REFRESH_SECRET_KEY: "${JWT_REFRESH_SECRET_KEY:?error}"
+      SIGNUP_TOKEN: "${SIGNUP_TOKEN:?error}"
+      # --- database settings ---
+      POSTGRES_DB: "${POSTGRES_DB:?error}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?error}"
+      POSTGRES_PORT: "${POSTGRES_PORT:?error}"
+      POSTGRES_USER: "${POSTGRES_USER:?error}"
       POSTGRES_HOST: postgres
+      # --- network settings ---
       FORWARDED_ALLOW_IPS: "*"
     expose:
       - "8000"
