@@ -24,6 +24,8 @@ jobs:
           POSTGRES_DATASET=/tmp/pgdata
           JWT_SECRET_KEY=Ci1placeholder
           JWT_REFRESH_SECRET_KEY=Ci1placeholder
+          JWT_EXPIRATION_TIME=1800
+          JWT_REFRESH_EXPIRATION_TIME=604800
           SIGNUP_TOKEN=AAAAAA
           ALLOWED_ORIGINS=[]
           COOKIE_DOMAIN=localhost
